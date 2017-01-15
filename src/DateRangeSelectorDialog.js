@@ -51,9 +51,9 @@ class DateRangeSelectorDialog extends Component {
   //todo (vishal) use calendar action button instead
   render() {
     return (
-      <div ref="root" style={{position: "relative"}}>
+      <div style={{position: "relative"}}>
         <Popover
-          anchorEl={this.refs.root} // For Popover
+          anchorEl={this} // For Popover
           animation={this.props.animation || PopoverAnimationVertical} // For Popover
           bodyStyle={styles.dialogBodyContent}
           contentStyle={styles.dialogContent}
