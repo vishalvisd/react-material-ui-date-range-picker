@@ -50574,13 +50574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        outline: 'none',
 	        fontSize: 'inherit',
 	        fontWeight: 'inherit',
-	        /**
-	         * This is needed so that ripples do not bleed
-	         * past border radius.
-	         * See: http://stackoverflow.com/questions/17298739/
-	         * css-overflow-hidden-not-working-in-chrome-when-parent-has-border-radius-and-chil
-	         */
-	        transform: disableTouchRipple && disableFocusRipple ? null : 'translate(0, 0)',
+	        position: 'relative', // This is needed so that ripples do not bleed past border radius.
 	        verticalAlign: href ? 'middle' : null
 	      }, style);
 
@@ -50633,12 +50627,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  onKeyDown: function onKeyDown() {},
 	  onKeyUp: function onKeyUp() {},
 	  onKeyboardFocus: function onKeyboardFocus() {},
-	  onMouseDown: function onMouseDown() {},
-	  onMouseEnter: function onMouseEnter() {},
-	  onMouseLeave: function onMouseLeave() {},
-	  onMouseUp: function onMouseUp() {},
-	  onTouchEnd: function onTouchEnd() {},
-	  onTouchStart: function onTouchStart() {},
 	  onTouchTap: function onTouchTap() {},
 	  tabIndex: 0,
 	  type: 'button'
@@ -50664,12 +50652,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  onKeyDown: _react.PropTypes.func,
 	  onKeyUp: _react.PropTypes.func,
 	  onKeyboardFocus: _react.PropTypes.func,
-	  onMouseDown: _react.PropTypes.func,
-	  onMouseEnter: _react.PropTypes.func,
-	  onMouseLeave: _react.PropTypes.func,
-	  onMouseUp: _react.PropTypes.func,
-	  onTouchEnd: _react.PropTypes.func,
-	  onTouchStart: _react.PropTypes.func,
 	  onTouchTap: _react.PropTypes.func,
 	  style: _react.PropTypes.object,
 	  tabIndex: _react.PropTypes.number,
@@ -53075,7 +53057,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  return {
 	    root: {
-	      position: 'relative',
 	      boxSizing: 'border-box',
 	      overflow: 'visible',
 	      transition: _transitions2.default.easeOut(),
@@ -53086,13 +53067,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    tooltip: {
 	      boxSizing: 'border-box'
-	    },
-	    overlay: {
-	      position: 'relative',
-	      top: 0,
-	      width: '100%',
-	      height: '100%',
-	      background: baseTheme.palette.disabledColor
 	    },
 	    disabled: {
 	      color: baseTheme.palette.disabledColor,
@@ -53156,7 +53130,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }, _this.handleTouchStart = function (event) {
 	      _this.setState({ touch: true });
-	      _this.props.onTouchStart(event);
+
+	      if (_this.props.onTouchStart) {
+	        _this.props.onTouchStart(event);
+	      }
 	    }, _this.handleKeyboardFocus = function (event, isKeyboardFocused) {
 	      var _this$props = _this.props,
 	          disabled = _this$props.disabled,
@@ -53233,7 +53210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var hovered = (this.state.hovered || this.state.isKeyboardFocused) && !disabled;
 
-	      var mergedRootStyles = (0, _simpleAssign2.default)(styles.root, hovered ? hoveredStyle : {}, style);
+	      var mergedRootStyles = (0, _simpleAssign2.default)(styles.root, style, hovered ? hoveredStyle : {});
 
 	      var tooltipElement = tooltip ? _react2.default.createElement(_Tooltip2.default, {
 	        label: tooltip,
@@ -55952,8 +55929,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var filteredChildren = _this.getFilteredChildren(props.children);
 	    var selectedIndex = _this.getSelectedIndex(props, filteredChildren);
 
+	    var newFocusIndex = props.disableAutoFocus ? -1 : selectedIndex >= 0 ? selectedIndex : 0;
+	    if (newFocusIndex !== -1 && props.onMenuItemFocusChange) {
+	      props.onMenuItemFocusChange(null, newFocusIndex);
+	    }
 	    _this.state = {
-	      focusIndex: props.disableAutoFocus ? -1 : selectedIndex >= 0 ? selectedIndex : 0,
+	      focusIndex: newFocusIndex,
 	      isKeyboardFocused: props.initiallyKeyboardFocused,
 	      keyWidth: props.desktop ? 64 : 56
 	    };
@@ -55976,8 +55957,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var filteredChildren = this.getFilteredChildren(nextProps.children);
 	      var selectedIndex = this.getSelectedIndex(nextProps, filteredChildren);
 
+	      var newFocusIndex = nextProps.disableAutoFocus ? -1 : selectedIndex >= 0 ? selectedIndex : 0;
+	      if (newFocusIndex !== this.state.focusIndex && this.props.onMenuItemFocusChange) {
+	        this.props.onMenuItemFocusChange(null, newFocusIndex);
+	      }
 	      this.setState({
-	        focusIndex: nextProps.disableAutoFocus ? -1 : selectedIndex >= 0 ? selectedIndex : 0,
+	        focusIndex: newFocusIndex,
 	        keyWidth: nextProps.desktop ? 64 : 56
 	      });
 	    }
@@ -56057,13 +56042,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'decrementKeyboardFocusIndex',
-	    value: function decrementKeyboardFocusIndex() {
+	    value: function decrementKeyboardFocusIndex(event) {
 	      var index = this.state.focusIndex;
 
 	      index--;
 	      if (index < 0) index = 0;
 
-	      this.setFocusIndex(index, true);
+	      this.setFocusIndex(event, index, true);
 	    }
 	  }, {
 	    key: 'getMenuItemCount',
@@ -56095,7 +56080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'setFocusIndexStartsWith',
-	    value: function setFocusIndexStartsWith(keys) {
+	    value: function setFocusIndexStartsWith(event, keys) {
 	      var foundIndex = -1;
 	      _react2.default.Children.forEach(this.props.children, function (child, index) {
 	        if (foundIndex >= 0) {
@@ -56108,7 +56093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      });
 	      if (foundIndex >= 0) {
-	        this.setFocusIndex(foundIndex, true);
+	        this.setFocusIndex(event, foundIndex, true);
 	        return true;
 	      }
 	      return false;
@@ -56123,7 +56108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var itemValue = item.props.value;
 	      var focusIndex = _react2.default.isValidElement(children) ? 0 : children.indexOf(item);
 
-	      this.setFocusIndex(focusIndex, false);
+	      this.setFocusIndex(event, focusIndex, false);
 
 	      if (multiple) {
 	        var itemIndex = menuValue.indexOf(itemValue);
@@ -56146,14 +56131,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'incrementKeyboardFocusIndex',
-	    value: function incrementKeyboardFocusIndex(filteredChildren) {
+	    value: function incrementKeyboardFocusIndex(event, filteredChildren) {
 	      var index = this.state.focusIndex;
 	      var maxIndex = this.getMenuItemCount(filteredChildren) - 1;
 
 	      index++;
 	      if (index > maxIndex) index = maxIndex;
 
-	      this.setFocusIndex(index, true);
+	      this.setFocusIndex(event, index, true);
 	    }
 	  }, {
 	    key: 'isChildSelected',
@@ -56169,7 +56154,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'setFocusIndex',
-	    value: function setFocusIndex(newIndex, isKeyboardFocused) {
+	    value: function setFocusIndex(event, newIndex, isKeyboardFocused) {
+	      if (this.props.onMenuItemFocusChange) {
+	        // Do this even if `newIndex === this.state.focusIndex` to allow users
+	        // to detect up-arrow on the first MenuItem or down-arrow on the last.
+	        this.props.onMenuItemFocusChange(event, newIndex);
+	      }
 	      this.setState({
 	        focusIndex: newIndex,
 	        isKeyboardFocused: isKeyboardFocused
@@ -56234,13 +56224,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	          multiple = _props2.multiple,
 	          onItemTouchTap = _props2.onItemTouchTap,
 	          onEscKeyDown = _props2.onEscKeyDown,
+	          onMenuItemFocusChange = _props2.onMenuItemFocusChange,
 	          selectedMenuItemStyle = _props2.selectedMenuItemStyle,
 	          menuItemStyle = _props2.menuItemStyle,
 	          style = _props2.style,
 	          value = _props2.value,
 	          valueLink = _props2.valueLink,
 	          width = _props2.width,
-	          other = (0, _objectWithoutProperties3.default)(_props2, ['autoWidth', 'children', 'desktop', 'disableAutoFocus', 'initiallyKeyboardFocused', 'listStyle', 'maxHeight', 'multiple', 'onItemTouchTap', 'onEscKeyDown', 'selectedMenuItemStyle', 'menuItemStyle', 'style', 'value', 'valueLink', 'width']);
+	          other = (0, _objectWithoutProperties3.default)(_props2, ['autoWidth', 'children', 'desktop', 'disableAutoFocus', 'initiallyKeyboardFocused', 'listStyle', 'maxHeight', 'multiple', 'onItemTouchTap', 'onEscKeyDown', 'onMenuItemFocusChange', 'selectedMenuItemStyle', 'menuItemStyle', 'style', 'value', 'valueLink', 'width']);
 	      var prepareStyles = this.context.muiTheme.prepareStyles;
 
 	      var styles = getStyles(this.props, this.context);
@@ -56252,18 +56243,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var menuItemIndex = 0;
 	      var newChildren = _react2.default.Children.map(filteredChildren, function (child, index) {
-	        var childIsADivider = child.type && child.type.muiName === 'Divider';
 	        var childIsDisabled = child.props.disabled;
+	        var childName = child.type ? child.type.muiName : '';
+	        var newChild = child;
 
-	        var clonedChild = childIsADivider ? _react2.default.cloneElement(child, {
-	          style: (0, _simpleAssign2.default)({}, styles.divider, child.props.style)
-	        }) : childIsDisabled ? _react2.default.cloneElement(child, { desktop: desktop }) : _this4.cloneMenuItem(child, menuItemIndex, styles, index);
+	        switch (childName) {
+	          case 'MenuItem':
+	            newChild = childIsDisabled ? _react2.default.cloneElement(child, { desktop: desktop }) : _this4.cloneMenuItem(child, menuItemIndex, styles, index);
+	            break;
 
-	        if (!childIsADivider && !childIsDisabled) {
+	          case 'Divider':
+	            newChild = _react2.default.cloneElement(child, {
+	              style: (0, _simpleAssign2.default)({}, styles.divider, child.props.style)
+	            });
+	            break;
+	        }
+
+	        if (childName === 'MenuItem' && !childIsDisabled) {
 	          menuItemIndex++;
 	        }
 
-	        return clonedChild;
+	        return newChild;
 	      });
 
 	      return _react2.default.createElement(_ClickAwayListener2.default, { onClickAway: this.handleClickAway }, _react2.default.createElement('div', {
@@ -56304,7 +56304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 
-	    _this5.setFocusIndex(-1, false);
+	    _this5.setFocusIndex(event, -1, false);
 	  };
 
 	  this.handleKeyDown = function (event) {
@@ -56313,7 +56313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    switch (key) {
 	      case 'down':
 	        event.preventDefault();
-	        _this5.incrementKeyboardFocusIndex(filteredChildren);
+	        _this5.incrementKeyboardFocusIndex(event, filteredChildren);
 	        break;
 	      case 'esc':
 	        _this5.props.onEscKeyDown(event);
@@ -56321,19 +56321,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      case 'tab':
 	        event.preventDefault();
 	        if (event.shiftKey) {
-	          _this5.decrementKeyboardFocusIndex();
+	          _this5.decrementKeyboardFocusIndex(event);
 	        } else {
-	          _this5.incrementKeyboardFocusIndex(filteredChildren);
+	          _this5.incrementKeyboardFocusIndex(event, filteredChildren);
 	        }
 	        break;
 	      case 'up':
 	        event.preventDefault();
-	        _this5.decrementKeyboardFocusIndex();
+	        _this5.decrementKeyboardFocusIndex(event);
 	        break;
 	      default:
 	        if (key && key.length === 1) {
 	          var hotKeys = _this5.hotKeyHolder.append(key);
-	          if (_this5.setFocusIndexStartsWith(hotKeys)) {
+	          if (_this5.setFocusIndexStartsWith(event, hotKeys)) {
 	            event.preventDefault();
 	          }
 	        }
@@ -56435,6 +56435,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  onItemTouchTap: _react.PropTypes.func,
 	  /** @ignore */
 	  onKeyDown: _react.PropTypes.func,
+	  /**
+	   * Callback function fired when the focus on a `MenuItem` is changed.
+	   * There will be some "duplicate" changes reported if two different
+	   * focusing event happen, for example if a `MenuItem` is focused via
+	   * the keyboard and then it is clicked on.
+	   *
+	   * @param {object} event The event that triggered the focus change.
+	   * The event can be null since the focus can be changed for non-event
+	   * reasons such as prop changes.
+	   * @param {number} newFocusIndex The index of the newly focused
+	   * `MenuItem` or `-1` if focus was lost.
+	   */
+	  onMenuItemFocusChange: _react.PropTypes.func,
 	  /**
 	   * Override the inline-styles of selected menu items.
 	   */
@@ -63104,7 +63117,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        transition: _transitions2.default.easeOut(),
 	        borderRadius: 2,
 	        userSelect: 'none',
-	        position: 'relative',
 	        overflow: 'hidden',
 	        backgroundColor: hovered ? buttonHoverColor : buttonBackgroundColor,
 	        padding: 0,
@@ -65630,6 +65642,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(296);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _transitions = __webpack_require__(443);
 
 	var _transitions2 = _interopRequireDefault(_transitions);
@@ -65653,6 +65669,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _PopoverAnimationVertical = __webpack_require__(580);
 
 	var _PopoverAnimationVertical2 = _interopRequireDefault(_PopoverAnimationVertical);
+
+	var _keycode = __webpack_require__(591);
+
+	var _keycode2 = _interopRequireDefault(_keycode);
+
+	var _events = __webpack_require__(590);
+
+	var _events2 = _interopRequireDefault(_events);
+
+	var _IconButton = __webpack_require__(615);
+
+	var _IconButton2 = _interopRequireDefault(_IconButton);
 
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
@@ -65680,7 +65708,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      fill: accentColor,
 	      position: 'absolute',
 	      right: spacing.desktopGutterLess,
-	      top: (spacing.desktopToolbarHeight - 24) / 2
+	      top: (spacing.iconSize - 24) / 2 + spacing.desktopGutterMini / 2
+	    },
+	    iconChildren: {
+	      fill: 'inherit'
 	    },
 	    label: {
 	      color: disabled ? palette.disabledColor : palette.textColor,
@@ -65689,7 +65720,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      opacity: 1,
 	      position: 'relative',
 	      paddingLeft: spacing.desktopGutter,
-	      paddingRight: spacing.iconSize + spacing.desktopGutterLess + spacing.desktopGutterMini,
+	      paddingRight: spacing.iconSize * 2 + spacing.desktopGutterMini,
 	      textOverflow: 'ellipsis',
 	      top: 0,
 	      whiteSpace: 'nowrap'
@@ -65737,33 +65768,55 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = DropDownMenu.__proto__ || (0, _getPrototypeOf2.default)(DropDownMenu)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 	      open: false
-	    }, _this.handleTouchTapControl = function (event) {
+	    }, _this.rootNode = undefined, _this.arrowNode = undefined, _this.handleTouchTapControl = function (event) {
 	      event.preventDefault();
 	      if (!_this.props.disabled) {
 	        _this.setState({
 	          open: !_this.state.open,
-	          anchorEl: _this.refs.root
+	          anchorEl: _this.rootNode
 	        });
 	      }
 	    }, _this.handleRequestCloseMenu = function () {
-	      _this.setState({
-	        open: false,
-	        anchorEl: null
-	      }, function () {
-	        if (_this.props.onClose) {
-	          _this.props.onClose();
-	        }
-	      });
+	      _this.close(false);
+	    }, _this.handleEscKeyDownMenu = function () {
+	      _this.close(true);
+	    }, _this.handleKeyDown = function (event) {
+	      switch ((0, _keycode2.default)(event)) {
+	        case 'up':
+	        case 'down':
+	        case 'space':
+	        case 'enter':
+	          event.preventDefault();
+	          _this.setState({
+	            open: true,
+	            anchorEl: _this.rootNode
+	          });
+	          break;
+	      }
 	    }, _this.handleItemTouchTap = function (event, child, index) {
 	      event.persist();
+	      _this.setState({
+	        open: false
+	      }, function () {
+	        if (_this.props.onChange) {
+	          _this.props.onChange(event, index, child.props.value);
+	        }
+
+	        _this.close(_events2.default.isKeyboard(event));
+	      });
+	    }, _this.close = function (isKeyboard) {
 	      _this.setState({
 	        open: false
 	      }, function () {
 	        if (_this.props.onClose) {
 	          _this.props.onClose();
 	        }
-	        if (_this.props.onChange) {
-	          _this.props.onChange(event, index, child.props.value);
+
+	        if (isKeyboard) {
+	          var dropArrow = _this.arrowNode;
+	          var dropNode = _reactDom2.default.findDOMNode(dropArrow);
+	          dropNode.focus();
+	          dropArrow.setKeyboardFocus(true);
 	        }
 	      });
 	    }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
@@ -65786,12 +65839,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // TODO: Temporary fix to make openImmediately work with popover.
 	        /* eslint-disable react/no-did-mount-set-state */
 	        setTimeout(function () {
-	          return _this2.setState({ open: true, anchorEl: _this2.refs.root });
-	        });
-	        setTimeout(function () {
 	          return _this2.setState({
 	            open: true,
-	            anchorEl: _this2.refs.root
+	            anchorEl: _this2.rootNode
 	          });
 	        }, 0);
 	        /* eslint-enable react/no-did-mount-set-state */
@@ -65804,34 +65854,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setWidth();
 	      }
 	    }
+	  }, {
+	    key: 'getInputNode',
 
 	    /**
 	     * This method is deprecated but still here because the TextField
 	     * need it in order to work. TODO: That will be addressed later.
 	     */
-
-	  }, {
-	    key: 'getInputNode',
 	    value: function getInputNode() {
 	      var _this3 = this;
 
-	      var root = this.refs.root;
+	      var rootNode = this.rootNode;
 
-	      root.focus = function () {
+	      rootNode.focus = function () {
 	        if (!_this3.props.disabled) {
 	          _this3.setState({
 	            open: !_this3.state.open,
-	            anchorEl: _this3.refs.root
+	            anchorEl: _this3.rootNode
 	          });
 	        }
 	      };
 
-	      return root;
+	      return rootNode;
 	    }
 	  }, {
 	    key: 'setWidth',
 	    value: function setWidth() {
-	      var el = this.refs.root;
+	      var el = this.rootNode;
 	      if (!this.props.style || !this.props.style.hasOwnProperty('width')) {
 	        el.style.width = 'auto';
 	      }
@@ -65839,6 +65888,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this4 = this;
+
 	      var _props = this.props,
 	          animated = _props.animated,
 	          animation = _props.animation,
@@ -65883,12 +65934,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      return _react2.default.createElement('div', (0, _extends3.default)({}, other, {
-	        ref: 'root',
+	        ref: function ref(node) {
+	          _this4.rootNode = node;
+	        },
 	        className: className,
 	        style: prepareStyles((0, _simpleAssign2.default)({}, styles.root, open && styles.rootWhenOpen, style))
-	      }), _react2.default.createElement(_ClearFix2.default, { style: styles.control, onTouchTap: this.handleTouchTapControl }, _react2.default.createElement('div', {
-	        style: prepareStyles((0, _simpleAssign2.default)({}, styles.label, open && styles.labelWhenOpen, labelStyle))
-	      }, displayValue), _react2.default.createElement(_arrowDropDown2.default, { style: (0, _simpleAssign2.default)({}, styles.icon, iconStyle) }), _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)({}, styles.underline, underlineStyle)) })), _react2.default.createElement(_Popover2.default, {
+	      }), _react2.default.createElement(_ClearFix2.default, { style: styles.control, onTouchTap: this.handleTouchTapControl }, _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)({}, styles.label, open && styles.labelWhenOpen, labelStyle)) }, displayValue), _react2.default.createElement(_IconButton2.default, {
+	        tabIndex: this.props.disabled ? -1 : undefined,
+	        onKeyDown: this.handleKeyDown,
+	        ref: function ref(node) {
+	          _this4.arrowNode = node;
+	        },
+	        style: (0, _simpleAssign2.default)({}, styles.icon, iconStyle),
+	        iconStyle: styles.iconChildren
+	      }, _react2.default.createElement(_arrowDropDown2.default, null)), _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)({}, styles.underline, underlineStyle)) })), _react2.default.createElement(_Popover2.default, {
 	        anchorOrigin: anchorOrigin,
 	        anchorEl: anchorEl,
 	        animation: animation || _PopoverAnimationVertical2.default,
@@ -65899,6 +65958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        maxHeight: maxHeight,
 	        desktop: true,
 	        value: value,
+	        onEscKeyDown: this.handleEscKeyDownMenu,
 	        style: menuStyle,
 	        listStyle: listStyle,
 	        onItemTouchTap: this.handleItemTouchTap,
@@ -66384,12 +66444,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return {
 	    root: {
 	      transition: _transitions2.default.easeOut(),
-	      display: 'inline-block'
+	      display: 'inline-block',
+	      backgroundColor: 'transparent'
 	    },
 	    container: {
 	      backgroundColor: backgroundColor,
 	      transition: _transitions2.default.easeOut(),
-	      position: 'relative',
 	      height: floatingActionButton.buttonSize,
 	      width: floatingActionButton.buttonSize,
 	      padding: 0,
@@ -67393,9 +67453,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      process.env.NODE_ENV !== "production" ? (0, _warning2.default)(iconButtonElement.type.muiName !== 'SvgIcon', 'Material-UI: You shoud not provide an <SvgIcon /> to the \'iconButtonElement\' property of <IconMenu />.\nYou should wrapped it with an <IconButton />.') : void 0;
 
-	      var iconButton = _react2.default.cloneElement(iconButtonElement, {
+	      var iconButtonProps = {
 	        onKeyboardFocus: onKeyboardFocus,
-	        iconStyle: iconStyle ? (0, _simpleAssign2.default)({}, iconStyle, iconButtonElement.props.iconStyle) : iconButtonElement.props.iconStyle,
 	        onTouchTap: function onTouchTap(event) {
 	          _this3.open(_events2.default.isKeyboard(event) ? 'keyboard' : 'iconTap', event);
 	          if (iconButtonElement.props.onTouchTap) {
@@ -67403,7 +67462,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        },
 	        ref: 'iconButton'
-	      });
+	      };
+	      if (iconStyle || iconButtonElement.props.iconStyle) {
+	        iconButtonProps.iconStyle = iconStyle ? (0, _simpleAssign2.default)({}, iconStyle, iconButtonElement.props.iconStyle) : iconButtonElement.props.iconStyle;
+	      }
+	      var iconButton = _react2.default.cloneElement(iconButtonElement, iconButtonProps);
 
 	      var menu = _react2.default.createElement(_Menu2.default, (0, _extends3.default)({}, other, {
 	        initiallyKeyboardFocused: this.state.menuInitiallyKeyboardFocused,
@@ -71054,9 +71117,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _typeof3 = _interopRequireDefault(_typeof2);
 
 	exports.default = function (muiTheme) {
+	  var isClient = typeof navigator !== 'undefined';
 	  var userAgent = muiTheme.userAgent;
 
-	  if (userAgent === undefined && typeof navigator !== 'undefined') {
+	  if (userAgent === undefined && isClient) {
 	    userAgent = navigator.userAgent;
 	  }
 
@@ -71066,26 +71130,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    hasWarnedAboutUserAgent = true;
 	  }
 
-	  var isServer = typeof window === 'undefined';
-
 	  if (userAgent === false) {
 	    // Disabled autoprefixer
 	    return null;
 	  } else if (userAgent === 'all' || userAgent === undefined) {
 	    // Prefix for all user agent
 	    return function (style) {
-	      var isFlex = false;
-
-	      if (isServer) {
-	        isFlex = ['flex', 'inline-flex'].indexOf(style.display) !== -1;
-	      }
-
+	      var isFlex = ['flex', 'inline-flex'].indexOf(style.display) !== -1;
 	      var stylePrefixed = _inlineStylePrefixer2.default.prefixAll(style);
 
-	      // We can't apply this join with react-dom:
-	      // #https://github.com/facebook/react/issues/6467
 	      if (isFlex) {
-	        stylePrefixed.display = stylePrefixed.display.join('; display: ');
+	        var display = stylePrefixed.display;
+	        if (isClient) {
+	          // We can't apply this join with react-dom:
+	          // #https://github.com/facebook/react/issues/6467
+	          stylePrefixed.display = display[display.length - 1];
+	        } else {
+	          stylePrefixed.display = display.join('; display: ');
+	        }
 	      }
 
 	      return stylePrefixed;
@@ -74195,7 +74257,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      minWidth: fullWidth ? '100%' : button.minWidth
 	    },
 	    button: {
-	      position: 'relative',
 	      height: buttonHeight,
 	      lineHeight: buttonHeight + 'px',
 	      width: '100%',
@@ -75171,7 +75232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    icon: {
 	      right: 0,
-	      top: props.floatingLabelText ? 22 : 14
+	      top: props.floatingLabelText ? 8 : 0
 	    },
 	    hideDropDownUnderline: {
 	      borderTop: 'none'
@@ -78351,10 +78412,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          onTouchTap = _props.onTouchTap,
 	          selected = _props.selected,
 	          label = _props.label,
+	          buttonStyle = _props.buttonStyle,
 	          style = _props.style,
 	          value = _props.value,
 	          width = _props.width,
-	          other = (0, _objectWithoutProperties3.default)(_props, ['icon', 'index', 'onActive', 'onTouchTap', 'selected', 'label', 'style', 'value', 'width']);
+	          other = (0, _objectWithoutProperties3.default)(_props, ['icon', 'index', 'onActive', 'onTouchTap', 'selected', 'label', 'buttonStyle', 'style', 'value', 'width']);
 
 	      var styles = getStyles(this.props, this.context);
 
@@ -78384,7 +78446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        focusRippleOpacity: rippleOpacity,
 	        touchRippleOpacity: rippleOpacity,
 	        onTouchTap: this.handleTouchTap
-	      }), _react2.default.createElement('div', { style: styles.button }, iconElement, label));
+	      }), _react2.default.createElement('div', { style: (0, _simpleAssign2.default)(styles.button, buttonStyle) }, iconElement, label));
 	    }
 	  }]);
 	  return Tab;
@@ -78395,6 +78457,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  muiTheme: _react.PropTypes.object.isRequired
 	};
 	process.env.NODE_ENV !== "production" ? Tab.propTypes = {
+	  /**
+	   * Override the inline-styles of the button element.
+	   */
+	  buttonStyle: _react.PropTypes.object,
 	  /**
 	   * The css class name of the root element.
 	   */
@@ -78679,9 +78745,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var inkBarContainerWidth = tabItemContainerStyle ? tabItemContainerStyle.width : '100%';
 
-	      return _react2.default.createElement('div', (0, _extends3.default)({
-	        style: prepareStyles((0, _simpleAssign2.default)({}, style))
-	      }, other), _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)(styles.tabItemContainer, tabItemContainerStyle)) }, tabs), _react2.default.createElement('div', { style: { width: inkBarContainerWidth } }, inkBar), _react2.default.createElement('div', {
+	      return _react2.default.createElement('div', (0, _extends3.default)({ style: prepareStyles((0, _simpleAssign2.default)({}, style)) }, other), _react2.default.createElement('div', { style: prepareStyles((0, _simpleAssign2.default)(styles.tabItemContainer, tabItemContainerStyle)) }, tabs), _react2.default.createElement('div', { style: { width: inkBarContainerWidth } }, inkBar), _react2.default.createElement('div', {
 	        style: prepareStyles((0, _simpleAssign2.default)({}, contentContainerStyle)),
 	        className: contentContainerClassName
 	      }, tabContent));
@@ -78718,7 +78782,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Specify initial visible tab index.
 	   * If `initialSelectedIndex` is set but larger than the total amount of specified tabs,
 	   * `initialSelectedIndex` will revert back to default.
-	   * If `initialSlectedIndex` is set to any negative value, no tab will be selected intially.
+	   * If `initialSelectedIndex` is set to any negative value, no tab will be selected intially.
 	   */
 	  initialSelectedIndex: _react.PropTypes.number,
 	  /**
@@ -79011,7 +79075,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return {
 	    root: {
 	      backgroundColor: table.backgroundColor,
-	      padding: '0 ' + baseTheme.spacing.desktopGutter + 'px',
 	      width: '100%',
 	      borderCollapse: 'collapse',
 	      borderSpacing: 0,
@@ -79431,15 +79494,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      if (this.props.allRowsSelected && !nextProps.allRowsSelected) {
-	        this.setState({
-	          selectedRows: this.state.selectedRows.length > 0 ? [this.state.selectedRows[this.state.selectedRows.length - 1]] : []
-	        });
-	        // TODO: should else be conditional, not run any time props other than allRowsSelected change?
-	      } else {
-	        this.setState({
-	          selectedRows: this.calculatePreselectedRows(nextProps)
-	        });
+	      if (this.props.allRowsSelected !== nextProps.allRowsSelected) {
+	        if (!nextProps.allRowsSelected) {
+	          this.setState({
+	            selectedRows: []
+	          });
+	        } else {
+	          this.setState({
+	            selectedRows: this.calculatePreselectedRows(nextProps)
+	          });
+	        }
 	      }
 	    }
 	  }, {
@@ -80224,7 +80288,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = TableHeader.__proto__ || (0, _getPrototypeOf2.default)(TableHeader)).call.apply(_ref, [this].concat(args))), _this), _this.handleCheckAll = function (event, checked) {
-	      if (_this.props.onSelectAll) _this.props.onSelectAll(checked);
+	      if (_this.props.onSelectAll) {
+	        _this.props.onSelectAll(checked);
+	      }
 	    }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	  }
 
