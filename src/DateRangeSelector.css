@@ -1,0 +1,28 @@
+.container {
+  position: relative;
+  display: inline-flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+.container [style *="lightblue"] > button [style *=" rgb(0, 151, 167)"] {
+  border-radius: 0 !important;
+}
+
+.other {
+  left: 500px;
+}
+
+.flexContainer {
+  display: inline-flex;
+  justify-content: center;
+  align-self: center;
+}

@@ -1,0 +1,132 @@
+.DateRangePicker__container___1Valu {
+  position: relative;
+}
+.DateRangeSelector__container___10BCQ {
+  position: relative;
+  display: inline-flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.DateRangeSelector__container___10BCQ::-webkit-scrollbar {
+  display: none;
+}
+
+.DateRangeSelector__container___10BCQ [style *="lightblue"] > button [style *=" rgb(0, 151, 167)"] {
+  border-radius: 0 !important;
+}
+
+.DateRangeSelector__other___2863S {
+  left: 500px;
+}
+
+.DateRangeSelector__flexContainer___eEVWC {
+  display: inline-flex;
+  justify-content: center;
+  align-self: center;
+}
+.DateRangeSelectorDialog__flexcontainer___Xkk9A {
+}
+
+.DateRangeSelectorDialog__buttoncontainer___1UHhz {
+}
+
+.DateRangeSelectorDialog__dialogContent___1jdYf {
+  width: 310px;
+  top: 72px;
+  left: 237.109px;
+}
+
+.DateRangeSelectorDialog__dialogBodyContent___8ennh {
+  padding: 0;
+  min-height: 300px;
+  min-width: 310px;
+  left: 11vw;
+}
+
+.DateRangeSelectorDialog__RangeButton___2Nc5y {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  overflow: auto;
+  /* padding: 2% 20px; */
+  width: 254px;
+  position: relative;
+  left: 2px;
+  bottom: 14px;
+  padding: 0px;
+  min-height: 329px;
+}
+
+.DateRangeSelectorDialog__okButton___o4vlw {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-left: auto;
+  position: relative;
+  /*bottom: -61px;*/
+  right: 2%;
+}
+
+.DateRangeSelectorDialog__flexInnerContainer___2pTel {
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.DateRangeSelectorDialog__customrange___1NisB {
+  display: inline-block;
+  top: 20px;
+  position: relative;
+  margin: 0% 7px 22px 10px;
+  font-size: 16px;
+  height: 35px;
+  padding: 6px 10px;
+  text-transform: capitalize;
+  /* text-decoration: underline; */
+  color: grey;
+  font-weight: 500;
+  /* margin-bottom: 21px; */
+  ;
+}
+
+.DateRangeSelectorDialog__mainContainer___36Qtr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  padding: 9px 0px 15px 0px;
+}
+
+.DateRangeSelectorDialog__customRangeContainer___3zq8l {
+  display: inline-flex;
+}
+
+.DateRangeSelectorDialog__dateRangeContainer___11O80 {
+  height: 190px;
+  overflow-y: scroll;
+}
+
+.DateRangeSelectorDialog__Animating___1S-AJ {
+  font-size: 2rem;
+  position: relative;
+  animation: DateRangeSelectorDialog__iconanimation___10qZe  ease-in-out 0.8s  infinite alternate;
+  cursor: pointer;
+}
+
+@keyframes DateRangeSelectorDialog__iconanimation___10qZe {
+  from {
+    top: -1px;
+  }
+
+  to {
+    top: 1px;
+  }
+}
+

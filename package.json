@@ -1,0 +1,49 @@
+{
+  "name": "react-material-ui-date-range-picker",
+  "version": "1.0.0",
+  "description": "Date Range Picker Component for React Material-UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishalvisd/react-material-ui-date-range-picker.git"
+  },
+  "keywords": [
+    "React",
+    "materail-ui",
+    "date",
+    "range",
+    "picker"
+  ],
+  "author": "Vishal Daga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vishalvisd/react-material-ui-date-range-picker/issues"
+  },
+  "homepage": "https://github.com/vishalvisd/react-material-ui-date-range-picker#readme",
+  "dependencies": {
+    "material-ui": "*",
+    "react-css-modules": "^4.0.0",
+    "moment-timezone": "0.5.11",
+    "react-event-listener": "*"
+  },
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "babel-preset-es2015": "6.18.0",
+    "babel-preset-react": "6.16.0",
+    "babel-preset-stage-0": "6.16.0",
+    "css-loader": "0.26.1",
+    "json-loader": "0.5.4",
+    "webpack": "^1.14.0",
+    "extract-text-webpack-plugin": "1.0.1",
+    "style-loader": "0.13.1"
+  }
+}

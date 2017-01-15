@@ -1,0 +1,101 @@
+.flexcontainer {
+}
+
+.buttoncontainer {
+}
+
+.dialogContent {
+  width: 310px;
+  top: 72px;
+  left: 237.109px;
+}
+
+.dialogBodyContent {
+  padding: 0;
+  min-height: 300px;
+  min-width: 310px;
+  left: 11vw;
+}
+
+.RangeButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  overflow: auto;
+  /* padding: 2% 20px; */
+  width: 254px;
+  position: relative;
+  left: 2px;
+  bottom: 14px;
+  padding: 0px;
+  min-height: 329px;
+}
+
+.okButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-left: auto;
+  position: relative;
+  /*bottom: -61px;*/
+  right: 2%;
+}
+
+.flexInnerContainer {
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.customrange {
+  display: inline-block;
+  top: 20px;
+  position: relative;
+  margin: 0% 7px 22px 10px;
+  font-size: 16px;
+  height: 35px;
+  padding: 6px 10px;
+  text-transform: capitalize;
+  /* text-decoration: underline; */
+  color: grey;
+  font-weight: 500;
+  /* margin-bottom: 21px; */
+  ;
+}
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  padding: 9px 0px 15px 0px;
+}
+
+.customRangeContainer {
+  display: inline-flex;
+}
+
+.dateRangeContainer {
+  height: 190px;
+  overflow-y: scroll;
+}
+
+.Animating {
+  font-size: 2rem;
+  position: relative;
+  animation: iconanimation  ease-in-out 0.8s  infinite alternate;
+  cursor: pointer;
+}
+
+@keyframes iconanimation {
+  from {
+    top: -1px;
+  }
+
+  to {
+    top: 1px;
+  }
+}
+
